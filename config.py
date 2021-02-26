@@ -22,12 +22,15 @@ if socket.gethostname()[:7] == "DESKTOP":
     pg_db_password = config['DEFAULT']['LOCAL_DB_PASSWORD']
     pg_db_name = config['DEFAULT']['LOCAL_DB_NAME']
     pg_db_hostname = config['DEFAULT']['LOCAL_DB_HOSTNAME']
-
-
+    SQLALCHEMY_DATABASE_URI = "postgresql://{DB_USER}:{DB_PASS}@{DB_ADDR}/{DB_NAME}".format(
+        DB_USER=pg_db_username,
+        DB_PASS=pg_db_password,
+        DB_ADDR=pg_db_hostname,
+        DB_NAME=pg_db_name)
 
     SECRET_KEY = config['DEFAULT']['SECRET_KEY']
 
-    credentials = ServiceAccountCredentials.from_json_keyfile_name(config['DEFAULT']['GOOGLE_CREDENTIALS_PATH'], scope)
+    # credentials = ServiceAccountCredentials.from_json_keyfile_name(config['DEFAULT']['GOOGLE_CREDENTIALS_PATH'], scope)
 
     DISCORD_WEBHOOK_URL = config["DEFAULT"]["DISCORD_WEBHOOK_URL"]
 
@@ -43,10 +46,9 @@ else:
 
 
     SECRET_KEY = os.environ.get('SECRET_KEY', None)
-    print(os.environ.get('GOOGLE_CREDENTIALS', None))
-    print(json.loads(os.environ.get('GOOGLE_CREDENTIALS', None)))
-    credentials = ServiceAccountCredentials.from_json_keyfile_dict(
-        json.loads(os.environ.get('GOOGLE_CREDENTIALS', None)), scope)
+
+
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', None)
 
 
     DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL", None)

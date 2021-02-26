@@ -9,7 +9,7 @@ import base64
 from collections import namedtuple
 from flask_restful import Api, Resource, reqparse
 from datetime import datetime
-from config import credentials
+# from config import credentials
 import requests
 from config import DISCORD_WEBHOOK_URL
 from flask import request
@@ -29,56 +29,6 @@ def is_local():
     return isLocal
 
 
-def fetch_spread_sheet():
-    from app.cache import cache
-    gc = gspread.authorize(credentials).open("문법따먹기")
-
-    wks = gc.get_worksheet(0)
-
-    rows = wks.get_all_values()
-    print(rows)
-
-    try:
-
-        data = []
-        for i in range(1, len(rows) + 1, 2):
-            # row_tuple = Munhak(*row)
-            # row_tuple = row_tuple._replace(keywords=json.loads(row_tuple.keywords))
-            # if row_tuple.is_available == "TRUE":
-            #     data.append(row_tuple)
-            row1 = rows[i]
-            row2 = rows[i+1]
-
-            if dict(zip(rows[0], row1))["is_available"] == "T":
-
-                temp_dict = {}
-                temp_dict["quiz_seq"] = int(row1[0])
-
-                problem = row1[1].strip()
-                if problem[-1] == "." or problem[-1] == '?' or problem[-1] == "!":
-                    problem = problem[:len(problem) - 1] + " " + problem[-1]
-                correct = row2[1].strip()
-                if correct[-1] == "." or correct[-1] == '?' or correct[-1] == "!":
-                    correct = correct[:len(correct) - 1] + " " + correct[-1]
-
-                temp_dict["quiz"] = {
-                    "problem": problem,
-                    "correct": correct
-                }
-
-                data.append(temp_dict)
-
-
-    except:
-        pass
-
-
-    cache.set('quiz_data', data, timeout=99999999999999999)
-    print(data)
-    print(data)
-    print(data)
-    # print(munhak_rows)
-    return len(data)
 
 
 def format_url_title(title):
