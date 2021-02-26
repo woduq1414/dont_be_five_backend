@@ -78,24 +78,61 @@ def get_custom_level_list():
         desc("level_seq")).limit(
                 10).offset(
                 10 * (data["page"])).all()
+
+
+
     else:
-        custom_level_rows = CustomLevel.query.filter_by(is_public=True).order_by(
-        desc("level_seq")).limit(
-            10).offset(
-            10 * (data["page"])).all()
+        if "type" in data and data["type"] == "my":
+            print("SFD")
+            custom_level_rows = CustomLevel.query.filter_by(maker_device_id=data["device_id"]).order_by(
+                desc("level_seq")).limit(
+                10).offset(
+                10 * (data["page"])).all()
+        else:
+            custom_level_rows = CustomLevel.query.filter_by(is_public=True).order_by(
+            desc("level_seq")).limit(
+                10).offset(
+                10 * (data["page"])).all()
 
     # time.sleep(1)
     # custom_level_rows = reversed(custom_level_rows)
 
 
+
     return jsonify(
         {"data": [
-            {"levelId": custom_level_row.level_id, "addDate": custom_level_row.add_date,
+            {"levelId": custom_level_row.level_id, "addDate": custom_level_row.add_date, "isMine" : custom_level_row.maker_device_id == data["device_id"],
              "levelData": custom_level_row.level_data, "title": custom_level_row.title} for custom_level_row in
             custom_level_rows
         ]}
 
     )
+
+
+
+
+@others_bp.route("/api/custom-level/delete", methods=["GET", "POST"])
+def delete_custom_level_list():
+    args = request.get_json()
+    try:
+        data = DeleteLevelDataSchema().load(args)
+    except marshmallow.exceptions.ValidationError as e:
+        return abort(400)
+
+
+    target_row = CustomLevel.query.filter_by(level_id = data["level_id"], maker_device_id =data["device_id"]).first()
+    if target_row is not None:
+        db.session.delete(target_row)
+        db.session.commit()
+
+
+
+    return jsonify(
+        {"message" : "success"}
+
+    )
+
+
 
 
 @others_bp.route("/api/custom-level/upload", methods=["GET", "POST"])
@@ -147,6 +184,16 @@ class GetLevelDataListSchema(Schema):
 
     type = fields.String(required=False)
     query = fields.String(required=False)
+
+    device_id = fields.String(required=True)
+
+
+
+class DeleteLevelDataSchema(Schema):
+
+    level_id = fields.String(required=True)
+
+    device_id = fields.String(required=True)
 
 
 # def data_to_packet:
