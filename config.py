@@ -53,11 +53,11 @@ else:
 
     DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL", None)
 
-    REDIS_URL = os.environ.get('REDIS_URL', None)
+    # REDIS_URL = os.environ.get('REDIS_URL', None)
 
 
-    SESSION_TYPE = 'redis'
-    SESSION_REDIS = redis.from_url(REDIS_URL)
+    # SESSION_TYPE = 'redis'
+    # SESSION_REDIS = redis.from_url(REDIS_URL)
 
 
 # SESSION_REDIS = redis.Redis(host=REDIS_URL.split("redis://:")[1].split("@")[1].split(":")[0],
