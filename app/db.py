@@ -38,6 +38,8 @@ class CustomLevel(db.Model):
     level_id = db.Column(db.String, nullable=False)
 
     maker_device_id = db.Column(db.String, nullable=False)
+    nickname = db.Column(db.String, nullable=False, server_default='익명')
+
     level_data = db.Column(db.JSON, nullable=False)
 
     app_version = db.Column(db.String, nullable=False)

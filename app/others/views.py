@@ -74,7 +74,7 @@ def get_custom_level_list():
                 10).offset(
                 10 * (data["page"])).all()
         elif data["type"] == "맵 코드":
-            custom_level_rows = CustomLevel.query.filter_by( level_id=data["query"]).order_by(
+            custom_level_rows = CustomLevel.query.filter_by( level_id=data["query"].upper()).order_by(
         desc("level_seq")).limit(
                 10).offset(
                 10 * (data["page"])).all()
@@ -102,7 +102,7 @@ def get_custom_level_list():
     return jsonify(
         {"data": [
             {"levelId": custom_level_row.level_id, "addDate": custom_level_row.add_date, "isMine" : custom_level_row.maker_device_id == data["device_id"],
-             "levelData": custom_level_row.level_data, "title": custom_level_row.title} for custom_level_row in
+             "levelData": custom_level_row.level_data, "title": custom_level_row.title, "nickname" : custom_level_row.nickname} for custom_level_row in
             custom_level_rows
         ]}
 
@@ -160,7 +160,8 @@ def custom_level_upload():
         title=data["title"],
         level_id=get_random_string(),
         level_data=data["level_data"],
-        is_public=data["is_public"]
+        is_public=data["is_public"],
+        nickname=data["nickname"]
     )
 
     db.session.add(custom_level)
@@ -177,6 +178,8 @@ class UploadLevelDataSchema(Schema):
     title = fields.String(required=True, validate=validate.Regexp(r'^.{1,30}$'))
     level_data = fields.Raw(required=True)
     is_public = fields.Boolean(required=True)
+    nickname = fields.String(required=True)
+
 
 
 class GetLevelDataListSchema(Schema):
@@ -186,6 +189,8 @@ class GetLevelDataListSchema(Schema):
     query = fields.String(required=False)
 
     device_id = fields.String(required=True)
+
+
 
 
 
