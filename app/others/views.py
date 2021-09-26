@@ -28,6 +28,13 @@ import hashlib
 others_bp = Blueprint('others', __name__)
 
 
+@others_bp.route('/terms')
+def show_terms():
+    return render_template("terms.html")
+
+
+
+
 @others_bp.route('/images/<path:path>')
 def get_image(path):
     def get_absolute_path(path):
